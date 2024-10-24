@@ -1,0 +1,24 @@
+CREATE PROCEDURE dbo.USP_CUSTOMER_GET_ORDER_DETAILS (
+@UserEmail NVARCHAR(50),
+@CustomerId NVARCHAR(50))
+AS
+BEGIN
+  SELECT
+    o.ORDERID OrderNo
+   ,o1.OrderDate OrderDate
+   ,(c.HOUSENO + ' ' + c.STREET + ', ' + c.TOWN + ', ' + c.POSTCODE) AS DeliveryAddress
+   ,p.PRODUCTNAME AS PRODUCT
+   ,o.QUANTITY AS QUANTITY
+   ,o.PRICE AS priceEach
+   ,o1.DeliveryExpected AS DeliveryExpected
+  FROM ORDERITEMS o
+  INNER JOIN ORDERS o1
+    ON o.ORDERID = o1.ORDERID
+  INNER JOIN PRODUCTS p
+    ON o.PRODUCTID = p.PRODUCTID
+  INNER JOIN CUSTOMERS c
+    ON o1.CUSTOMERID = c.CUSTOMERID
+  WHERE c.EMAIL = @UserEmail
+  AND c.CUSTOMERID = @CustomerId;
+END;
+GO
